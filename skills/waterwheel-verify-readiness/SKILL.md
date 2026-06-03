@@ -5,19 +5,21 @@ description: Verify the Waterwheel QA environment is ready before running tests.
 
 # Waterwheel — Verify Readiness
 
-## Folder configuration
+## Configuration
 
-This skill uses these folder names by default:
+This skill uses these defaults:
 
 - Tests folder: `tests`
 - Outputs folder: `outputs`
+- Container name: `waterwheel-test-agent`
 
 Before running the checks, look for a `waterwheel.config.json` file in the project root. If it exists, override the defaults with its values:
 
-- Use `testsFolder` from the config in place of `tests`
-- Use `outputsFolder` from the config in place of `outputs`
+- Use `testsFolder` in place of `tests`
+- Use `outputsFolder` in place of `outputs`
+- Use `containerName` in place of `waterwheel-test-agent`
 
-If the file does not exist, or a key is missing, keep the default for that value. Resolve the folder names once at the start and reuse them throughout.
+If the file does not exist, or a key is missing, keep the default for that value. Resolve the configuration once at the start and reuse it throughout.
 
 ## Checks
 
@@ -25,9 +27,9 @@ The QA environment is ready when all three conditions below are met:
 
 1. **The test container is running:**
    ```shell
-   docker ps --filter "name=waterwheel-test-agent" --format "{{.Names}} {{.Status}}"
+   docker ps --filter "name=<containerName>" --format "{{.Names}} {{.Status}}"
    ```
-   The command should return a line showing the container name with an "Up" status.
+   Substitute the resolved container name. The command should return a line showing the container with an "Up" status.
 
 2. **The tests folder exists and contains at least one Markdown file.** Check that the resolved tests folder is present and holds one or more `.md` files.
 
