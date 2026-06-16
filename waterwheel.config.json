@@ -1,7 +1,7 @@
 {
-  "testsFolder": "tests",
-  "outputsFolder": "outputs",
   "containerName": "waterwheel-test-agent",
-  "appLogPath": "",
-  "maxDebugAttempts": 0
+  "testCheckInterval": 30,
+  "appLogPath": "none",
+  "maxFixAttempts": 0,
+  "deploymentSkill": "none"
 }
