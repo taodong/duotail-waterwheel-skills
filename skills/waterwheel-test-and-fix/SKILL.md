@@ -53,7 +53,7 @@ Poll for results by running:
 docker exec <containerName> check-test-result
 ```
 
-- If the output indicates testing is in progress, including an orchestrator PID, the tests are still running. Wait `testCheckInterval` seconds, then run the command again. Repeat until a final result is returned.
+- If the output indicates testing is in progress, the tests are still running. Wait `testCheckInterval` seconds, then run the command again. Repeat until a final result is returned.
 - If the output contains `No test results found`, the test agent failed to produce or retrieve results.
    - If the command also prints `agent.log`, include that output in the report to the user.
    - Stop after reporting the failure.
