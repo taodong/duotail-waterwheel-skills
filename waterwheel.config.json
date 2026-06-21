@@ -3,5 +3,5 @@
   "testCheckInterval": 30,
   "appLogPath": "none",
   "maxFixAttempts": 0,
-  "deploymentSkill": "none"
+  "deployInstruction": "none"
 }

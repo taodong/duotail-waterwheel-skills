@@ -21,7 +21,7 @@ Before running, look for a `waterwheel.config.json` file in the project root. If
 - Use `testCheckInterval` in place of `30` (seconds)
 - Use `appLogPath` in place of `none` (optional)
 - Use `maxFixAttempts` in place of `0`
-- Use `deploymentSkill` as the name of a skill to call for redeploying the application between fix attempts, in place of `none` if provided (optional)
+- Use `deployInstruction` as the instructions for redeploying the application between fix attempts, in place of `none` if provided (optional)
 
 If the file does not exist, or a key is missing, keep the default for that value. Resolve the configuration once at the start and reuse it throughout.
 
@@ -53,15 +53,14 @@ Poll for results by running:
 docker exec <containerName> check-test-result
 ```
 
-- If the output contains "Testing is in progress", the tests are still running. Wait `testCheckInterval` seconds, then run the command again. Repeat until a final result is returned.
-- If the output contains "No test results found", the test agent failed to run or retrieve results. Report this failure and stop.
-- Otherwise, the output is a JSON string. Parse it and read the `results` array. Each object in the array has a `status` field with one of these values: `success`, `failed`, `skipped`, `abort`, or `ignored`.
-
-Evaluate the results:
-
-- **All tests passed**: if every test has status `success`, `skipped`, or `ignored`, report that all tests passed and stop — the skill is complete.
-- **Aborted**: if any test has status `abort`, report the test run was aborted, include the `result` detail for each aborted test, and stop.
-- **Failures**: if any test has status `failed`, report each failure and include its `result` detail, then continue to step 4.
+- If the output indicates testing is in progress, including an orchestrator PID, the tests are still running. Wait `testCheckInterval` seconds, then run the command again. Repeat until a final result is returned.
+- If the output contains `No test results found`, the test agent failed to produce or retrieve results.
+   - If the command also prints `agent.log`, include that output in the report to the user.
+   - Stop after reporting the failure.
+- Otherwise, the output is the `exit_condition` from the results file. Evaluate it:
+  - `"All tests passed"` → report that all tests passed and stop — the skill is complete.
+  - `"One or more tests failed"` → report the failure and continue to step 4.
+  - Any other value → report that the run did not complete, include the exit condition as the reason, and stop.
 
 ## 4. Investigate test failures
 
@@ -86,8 +85,8 @@ Attempt to fix the failures by repeating this cycle:
 
 1. Apply a fix to the application code based on the failure investigation from step 4.
 2. Redeploy the application:
-   - If `deploymentSkill` is configured to a value other than `none`, call the specified skill to redeploy the application.
-   - If `deploymentSkill` is `none` or not configured, tell the user to manually redeploy with the fix applied, then stop and wait. The user will trigger the next run after redeployment.
+   - If `deployInstruction` is configured to a value other than `none`, follow the instructions to redeploy the application.
+   - If `deployInstruction` is `none` or not configured, tell the user to manually redeploy with the fix applied, then stop and wait. The user will trigger the next run after redeployment.
 3. Increment the fix attempt counter.
 4. Return to **step 2** to re-run the full test suite.
 5. After getting results in step 3:

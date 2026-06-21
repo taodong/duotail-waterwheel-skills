@@ -25,7 +25,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
   "testCheckInterval": 30,
   "appLogPath": "none",
   "maxFixAttempts": 0,
-  "deploymentSkill": "none"
+  "deployInstruction": "none"
 }
 ```
 
@@ -35,5 +35,5 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 | `testCheckInterval` | `30` | Time interval in seconds between test result checks. |
 | `appLogPath` | `none` | Path to your web application's own log file. When set, `waterwheel-debug-feature` reads it as an extra diagnostic source. |
 | `maxFixAttempts` | `0` (not allowed) | Caps the test and fix loop in `waterwheel-test-and-fix`. Set a positive number to stop after that many attempts; negative number means no cap. |
-| `deploymentSkill` | `none` | Skill to run to redeploy the website for retesting. If not set, the fix won't be verified. |
+| `deployInstruction` | `none` | Instructions of redeploying the website. If the website is auto deployed, you can use something like "wait 10 seconds". If not set, the fix won't be verified. |
 
