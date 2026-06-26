@@ -63,7 +63,7 @@ First decide whether any custom instructions are configured:
   - If at least one is configured → continue.
   - If none are configured → print a warning that no custom instructions were found and the agent is being reset to its default configuration, then continue.
 
-Then clear the agent's existing instruction files (`email-permissions.yaml` is preserved automatically, and host testing is turned off — step 8 re-enables it when needed):
+Then clear the agent's existing instruction files (host testing is turned off — step 8 re-enables it when needed):
 
 ```shell
 docker exec <containerName> reset-test-config -i
@@ -114,7 +114,7 @@ Import every entry in `allowedDomains` into the container as a comma-delimited l
 docker exec <containerName> set-domain-permission "<domain1>,<domain2>,..."
 ```
 
-If `allowedDomains` is empty, skip this step and note it. Capture any error and continue. (Do not pass `-l` here — when local testing is on, step 8 rewrites `localhost` for you.)
+If `allowedDomains` is empty, skip this step and note it. Capture any error and continue.
 
 ## 8. Enable local-host testing
 

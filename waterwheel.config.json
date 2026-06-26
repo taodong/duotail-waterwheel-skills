@@ -1,5 +1,5 @@
 {
-  "containerName": "waterwheel-test-agent",
+  "containerName": "waterwheel-agent",
   "imageName": "taojdcn/duotail-waterwheel:1.3.0",
   "allowRebuild": false,
   "aiProvider": "anthropic",
