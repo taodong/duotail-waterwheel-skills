@@ -8,6 +8,7 @@ Agent skills for pairing a code agent (such as Claude Code) with the [Waterwheel
 |---|---|
 | `waterwheel-test-and-fix` | Run Waterwheel to perform predefined web tests, report pass/fail results, identify the root cause of failed tests, and then fix them when permissions are granted |
 | `waterwheel-load-tests` | (Re)load the markdown test tasks from the project's task folder into the Waterwheel agent container |
+| `waterwheel-load-instructions` | (Re)load instruction and configuration files (instruction folder, preset context, global constants, domain permissions, local-host testing) into the Waterwheel agent container |
 | `waterwheel-agent-uninstall` | Uninstall the Waterwheel test agent by force-removing its Docker container |
 
 
@@ -35,7 +36,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
   "instructionFolder": "none",
   "presetContextFile": "none",
   "globalConstantsFile": "none",
-  "enableLocalTest": false,
+  "enableLocalTest": true,
   "testCheckInterval": 30,
   "appLogPath": "none",
   "maxFixAttempts": 0,
