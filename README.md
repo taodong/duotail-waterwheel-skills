@@ -6,6 +6,7 @@ Agent skills for pairing a code agent (such as Claude Code) with the [Waterwheel
 
 | Skill | Purpose |
 |---|---|
+| `waterwheel-run` | Run the full pipeline end to end: install the agent, load tests, load instructions, then run the test-and-fix loop |
 | `waterwheel-test-and-fix` | Run Waterwheel to perform predefined web tests, report pass/fail results, identify the root cause of failed tests, and then fix them when permissions are granted |
 | `waterwheel-load-tests` | (Re)load the markdown test tasks from the project's task folder into the Waterwheel agent container |
 | `waterwheel-load-instructions` | (Re)load instruction and configuration files (instruction folder, preset context, global constants, domain permissions, local-host testing) into the Waterwheel agent container |
@@ -25,7 +26,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 
 ```json
 {
-  "containerName": "waterwheel-test-agent",
+  "containerName": "waterwheel-agent",
   "imageName": "taojdcn/duotail-waterwheel:1.3.0",
   "allowRebuild": false,
   "aiProvider": "anthropic",
@@ -47,7 +48,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 
 | Key | Default | Description |
 |---|---|---|
-| `containerName` | `waterwheel-test-agent` | Name of the Waterwheel Docker container. |
+| `containerName` | `waterwheel-agent` | Name of the Waterwheel Docker container. |
 | `imageName` | `taojdcn/duotail-waterwheel:1.3.0` | The Waterwheel agent Docker image to pull. Minimum supported version is `1.3.0`. |
 | `allowRebuild` | `false` | When `false`, an existing container with the matching name is only ever started — never rebuilt. When `true`, if a matching container fails to start or its AI configuration has changed, `waterwheel-agent-uninstall` is run to remove it and a fresh installation is performed. |
 | `aiProvider` | `anthropic` | The AI provider for your API key. Supported values: `anthropic`, `openai`, `gemini`, `deepseek`, or `gemma`. |
