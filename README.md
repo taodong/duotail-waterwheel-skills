@@ -2,6 +2,26 @@
 
 Agent skills for pairing a code agent (such as Claude Code) with the [Waterwheel](https://waterwheel.duotail.com) browser test agent to run autonomous, test-driven web development.
 
+## Installation
+
+Install (or update) any skill from this repo with the `skills` CLI, naming the skill after the `@`:
+
+```shell
+npx skills add taodong/duotail-waterwheel-skills@<skill-name>
+```
+
+For example, to install the full pipeline:
+
+```shell
+npx skills add taodong/duotail-waterwheel-skills@waterwheel-run
+```
+
+To install every skill in this repo at once, use `--skill '*'`:
+
+```shell
+npx skills add taodong/duotail-waterwheel-skills --skill '*'
+```
+
 ## Skills
 
 | Skill | Purpose |
@@ -15,12 +35,6 @@ Agent skills for pairing a code agent (such as Claude Code) with the [Waterwheel
 | `waterwheel-stop-container` | Stop the running Waterwheel test agent container without removing it, so it can be started again later |
 | `waterwheel-agent-uninstall` | Uninstall the Waterwheel test agent by force-removing its Docker container |
 
-
-## Installation
-
-```shell
-npx skills add taodong/duotail-waterwheel-skills@waterwheel-test-and-fix
-```
 
 ## Configuration
 
