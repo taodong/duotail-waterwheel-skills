@@ -56,7 +56,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
   "globalConstantsFile": "none",
   "enableLocalTest": true,
   "testCheckInterval": 30,
-  "appLogPath": "none",
+  "appLogs": [],
   "maxFixAttempts": 0,
   "deployInstruction": "none"
 }
@@ -79,7 +79,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 | `enableLocalTest` | `true` | Set to `true` when the test website is hosted on the local machine (for example, `http://localhost:8080`), so the agent knows the test site is on the host machine rather than its own localhost. |
 | `allowedDomains` | `["http://localhost:8080", "http://localhost:3000", "http://localhost:5173"]` | The web domains the agent is allowed to visit. See the [Playwright MCP guide](https://waterwheel.duotail.com/docs/mcp-guide#playwright-mcp) for details. |
 | `testCheckInterval` | `30` | Time interval in seconds between test result checks. |
-| `appLogPath` | `none` | Path to your web application's own log file. When set, `waterwheel-debug-feature` reads it as an extra diagnostic source. |
+| `appLogs` | `[]` | A list of paths to your web application's own log files. When non-empty, `waterwheel-test-and-fix` reads each listed log as an extra diagnostic source. |
 | `maxFixAttempts` | `0` (not allowed) | Caps the test and fix loop in `waterwheel-test-and-fix`. Set a positive number to stop after that many attempts; negative number means no cap. |
 | `deployInstruction` | `none` | Instructions of redeploying the website. If the website is auto deployed, you can use something like "wait 10 seconds". If not set, the fix won't be verified. |
 

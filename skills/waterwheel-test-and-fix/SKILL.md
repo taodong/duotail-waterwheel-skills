@@ -11,7 +11,7 @@ This skill uses these defaults:
 
 - Container name: `waterwheel-agent`
 - Test check interval: 30 seconds
-- Application log path: none (optional)
+- Application logs: `[]` (empty list, optional)
 - Max fix attempts: 0
 - Deployment skill: none (optional)
 
@@ -19,7 +19,7 @@ Before running, look for a `waterwheel.config.json` file in the project root. If
 
 - Use `containerName` in place of `waterwheel-agent`
 - Use `testCheckInterval` in place of `30` (seconds)
-- Use `appLogPath` in place of `none` (optional)
+- Use `appLogs` in place of `[]` (optional; a list of paths to your application's log files)
 - Use `maxFixAttempts` in place of `0`
 - Use `deployInstruction` as the instructions for redeploying the application between fix attempts, in place of `none` if provided (optional)
 
@@ -70,7 +70,7 @@ Fetch the full failure details by running:
 docker exec <containerName> get-failure-detail -d
 ```
 
-Use the returned details, along with the application logs at `appLogPath` (if configured and not `none`), to understand what the agent observed at the point of failure and diagnose the root cause.
+Use the returned details, along with the application logs listed in `appLogs` (if any are configured), to understand what the agent observed at the point of failure and diagnose the root cause. When `appLogs` is non-empty, read each log path it lists and incorporate all of them into the diagnosis. If a listed path is missing or unreadable, note it and skip that file — do not fail; continue with the remaining logs. If `appLogs` is empty, skip this source entirely.
 
 ## 5. Fix and retry
 
