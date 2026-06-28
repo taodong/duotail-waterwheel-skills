@@ -5,6 +5,8 @@ description: Install the Waterwheel test agent container into the local Docker e
 
 # Waterwheel — Agent Install
 
+> **Capabilities:** This skill runs Docker commands (`version`, `inspect`, `start`, `run`, `rm -f`), pulls and runs the remote image `<imageName>`, reads the AI API key from a host environment variable and passes it into the container, and executes in-container configuration commands. It does **not** write to the host filesystem.
+
 ## Configuration
 
 This skill uses these defaults:
@@ -92,6 +94,7 @@ docker run -d --name <containerName> -e AI_API_KEY=$<aiKeyVarName> [extraEnvVars
 Build the command as follows:
 
 - `$<aiKeyVarName>` is the host environment variable named by `aiKeyVarName` (default `AI_API_KEY`). Its value is passed as the container's `AI_API_KEY`.
+  - **Handle the key as a secret:** reference it only by shell expansion (`$<aiKeyVarName>`). Never resolve, print, echo, or log its value, and never include its value in any report or message to the user. If the host variable is unset or empty, stop and tell the user to set `<aiKeyVarName>` — do not substitute a literal value.
 - `[extraEnvVars]` is replaced by the `extraEnvVars` list:
   - If the list is empty, omit `[extraEnvVars]` entirely.
   - Otherwise, prefix each element with `-e`. For example, `["MAX_SNAPSHOT_HISTORY=3", "ENABLE_API_LOGGING"]` becomes `-e MAX_SNAPSHOT_HISTORY=3 -e ENABLE_API_LOGGING`.

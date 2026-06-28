@@ -5,6 +5,8 @@ description: Uninstall the Waterwheel test agent by removing its Docker containe
 
 # Waterwheel — Agent Uninstall
 
+> **Capabilities:** This skill runs Docker commands (`inspect`, and `rm -f` to force-remove the named container). It is destructive to the container but does **not** write to the host filesystem or read any secrets.
+
 ## Configuration
 
 This skill uses this default:

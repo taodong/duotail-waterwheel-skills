@@ -5,6 +5,8 @@ description: Save context variables produced by the latest Waterwheel run into t
 
 # Waterwheel — Update Context
 
+> **Capabilities:** This skill runs Docker commands (`inspect`, `start`, `exec`), reads container-generated context values, and **writes one JSON file on the host** at the configured `presetContextFile` / `instructionFolder` path (creating it and its parent directory if needed). The path is fully user-controlled — it may point anywhere the agent can write — so the write location is only as constrained as your configuration. The values it persists originate inside the container and are treated as untrusted data; the user confirms which keys are written.
+
 During a run, the Waterwheel agent's tests can create or update context values (for example, an AI-generated username and password for a freshly registered account). This skill exports those values from the container and merges the ones the user chooses into the project's `preset-context.json` `data` object, so they become seed values for future runs.
 
 This skill **never** edits `waterwheel.config.json` — it only reads it and writes the resolved preset-context file.

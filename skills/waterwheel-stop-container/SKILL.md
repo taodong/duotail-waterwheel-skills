@@ -5,6 +5,8 @@ description: Stop the running Waterwheel test agent Docker container without rem
 
 # Waterwheel — Stop Container
 
+> **Capabilities:** This skill runs Docker commands (`inspect`, and `stop` to halt the named container). It leaves the container installed and does **not** write to the host filesystem or read any secrets.
+
 ## Configuration
 
 This skill uses this default:

@@ -5,6 +5,8 @@ description: Load the project's instruction and configuration files (instruction
 
 # Waterwheel — Load Instructions
 
+> **Capabilities:** This skill runs Docker commands (`inspect`, `start`, `exec`), reads instruction/config files from the host (instruction folder, preset-context, global-constants), and pipes their contents into the container along with the domain allowlist and local-host settings. It does **not** write to the host filesystem or read any secrets.
+
 This skill resets the Waterwheel agent's instruction files and reloads them from the project configuration: an optional instruction folder, an optional preset-context file, an optional global-constants file, the domain allowlist, and local-host testing.
 
 Steps 1–3 fail fast: if one cannot complete, stop and report the error. Steps 4–8 are best-effort: capture each error but keep going, and report everything together in step 9.

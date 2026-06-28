@@ -5,6 +5,8 @@ description: Set up and run the full Waterwheel pipeline end to end — install 
 
 # Waterwheel — Run (Full Pipeline)
 
+> **Capabilities:** This skill only orchestrates the four sub-skills below; it performs no Docker, filesystem, or secret operations of its own. Its effective capabilities are the union of those skills' — most notably installing/running a remote Docker image and reading the AI API key (`waterwheel-agent-install`) and, where permitted, editing application source code (`waterwheel-test-and-fix`). See each sub-skill's capability note.
+
 This skill is a thin orchestrator. It runs the four Waterwheel skills below **in sequence**, each as its own step. It does not duplicate their logic — invoke each skill and let it resolve its own configuration and perform its own work.
 
 The pipeline order is:

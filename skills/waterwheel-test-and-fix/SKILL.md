@@ -5,6 +5,8 @@ description: Run the Waterwheel autonomous test-and-fix loop for a web feature. 
 
 # Waterwheel — Test and Fix
 
+> **Capabilities:** This skill runs Docker commands (`inspect`, `start`, `exec`) to trigger and poll the test suite, reads the application log files listed in `appLogs` from the host, and — when `maxFixAttempts` permits — **edits application source code** and redeploys per `deployInstruction`. With the default `maxFixAttempts: 0` it never modifies code and only reports.
+
 ## Configuration
 
 This skill uses these defaults:

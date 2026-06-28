@@ -5,6 +5,8 @@ description: Load the markdown test tasks from the project's task folder into th
 
 # Waterwheel — Load Tests
 
+> **Capabilities:** This skill runs Docker commands (`inspect`, `start`, `exec`), reads markdown files from the project's task folder on the host, and pipes their contents into the container. It does **not** write to the host filesystem or read any secrets.
+
 This skill resets the Waterwheel agent's test tasks and uploads every markdown test file from the project's task folder into the container. Each step fails fast: if a step cannot complete, stop and report the error to the user rather than continuing.
 
 ## Configuration
