@@ -22,6 +22,20 @@ To install every skill in this repo at once, use `--skill '*'`:
 npx skills add taodong/duotail-waterwheel-skills --skill '*'
 ```
 
+### Pinning a version
+
+The commands above track the repository's default branch, so they always fetch the latest published skills. To pin to a specific release instead, add `#<tag>` before the `@<skill-name>`:
+
+```shell
+# Install a skill from a specific release
+npx skills add taodong/duotail-waterwheel-skills#v1.0.0@waterwheel-run
+
+# Pin the whole repo to a release
+npx skills add taodong/duotail-waterwheel-skills#v1.0.0 --skill '*'
+```
+
+`#<tag>` accepts any git tag or branch. Pin a version when a newer release raises the required agent image (`imageName`) or otherwise changes behavior you're not ready to adopt. Releases are listed on the repository's [tags page](https://github.com/taodong/duotail-waterwheel-skills/tags).
+
 ## Skills
 
 | Skill | Purpose |
