@@ -28,13 +28,13 @@ The commands above track the repository's default branch, so they always fetch t
 
 ```shell
 # Install a skill from a specific release
-npx skills add taodong/duotail-waterwheel-skills#v1.0.0@waterwheel-run
+npx skills add taodong/duotail-waterwheel-skills#v2.0.0@waterwheel-run
 
 # Pin the whole repo to a release
-npx skills add taodong/duotail-waterwheel-skills#v1.0.0 --skill '*'
+npx skills add taodong/duotail-waterwheel-skills#v2.0.0 --skill '*'
 ```
 
-`#<tag>` accepts any git tag or branch. Pin a version when a newer release raises the required agent image (`imageName`) or otherwise changes behavior you're not ready to adopt. Releases are listed on the repository's [tags page](https://github.com/taodong/duotail-waterwheel-skills/tags).
+`#<tag>` accepts any git tag or branch. Pin a version when a newer release raises the required agent image (`imageName`) or otherwise changes behavior you're not ready to adopt. For example, `v2.0.0` requires agent image `1.4.0`; to stay on the earlier `1.3.0` line, pin `#v1.0.0`. Releases are listed on the repository's [tags page](https://github.com/taodong/duotail-waterwheel-skills/tags).
 
 ## Skills
 
