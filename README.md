@@ -40,10 +40,11 @@ npx skills add taodong/duotail-waterwheel-skills#v1.0.0 --skill '*'
 
 | Skill | Purpose |
 |---|---|
-| `waterwheel-run` | Run the full pipeline end to end: install the agent, load tests, load instructions, then run the test-and-fix loop |
+| `waterwheel-run` | Run the full pipeline end to end: install the agent, load tests, load instructions, load test skills, then run the test-and-fix loop |
 | `waterwheel-test-and-fix` | Run Waterwheel to perform predefined web tests, report pass/fail results, identify the root cause of failed tests, and then fix them when permissions are granted |
 | `waterwheel-load-tests` | (Re)load the markdown test tasks from the project's task folder into the Waterwheel agent container |
 | `waterwheel-load-instructions` | (Re)load instruction and configuration files (instruction folder, preset context, global constants, domain permissions, local-host testing) into the Waterwheel agent container |
+| `waterwheel-load-test-skills` | (Re)load the project's user-defined test skills from the `testSkills` folder into the Waterwheel agent container (requires agent image `1.4.0`+) |
 | `waterwheel-update-context` | Export context variables from the latest run and merge the chosen values into the project's `preset-context.json` `data` object, so future tests reuse them |
 | `waterwheel-agent-install` | Install the Waterwheel test agent container into the local Docker environment, configuring its AI provider |
 | `waterwheel-stop-container` | Stop the running Waterwheel test agent container without removing it, so it can be started again later |
@@ -57,7 +58,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 ```json
 {
   "containerName": "waterwheel-agent",
-  "imageName": "taojdcn/duotail-waterwheel:1.3.0",
+  "imageName": "taojdcn/duotail-waterwheel:1.4.0",
   "allowRebuild": false,
   "aiProvider": "anthropic",
   "aiModel": "claude-sonnet-4-6",
@@ -65,6 +66,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
   "tokenMode": "efficiency",
   "extraEnvVars": [],
   "taskFolder": "tasks",
+  "testSkills": "none",
   "instructionFolder": "none",
   "presetContextFile": "none",
   "globalConstantsFile": "none",
@@ -79,7 +81,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 | Key | Default | Description |
 |---|---|---|
 | `containerName` | `waterwheel-agent` | Name of the Waterwheel Docker container. |
-| `imageName` | `taojdcn/duotail-waterwheel:1.3.0` | The Waterwheel agent Docker image to pull. Minimum supported version is `1.3.0`. |
+| `imageName` | `taojdcn/duotail-waterwheel:1.4.0` | The Waterwheel agent Docker image to pull. Minimum supported version is `1.4.0` (the `waterwheel-load-test-skills` skill needs the `load-test-skills` command added in `1.4.0`). |
 | `allowRebuild` | `false` | When `false`, an existing container with the matching name is only ever started — never rebuilt. When `true`, if a matching container fails to start or its AI configuration has changed, `waterwheel-agent-uninstall` is run to remove it and a fresh installation is performed. |
 | `aiProvider` | `anthropic` | The AI provider for your API key. Supported values: `anthropic`, `openai`, `gemini`, `deepseek`, or `gemma`. |
 | `aiModel` | `claude-sonnet-4-6` | The AI model the Waterwheel agent should use. |
@@ -87,6 +89,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 | `tokenMode` | `efficiency` | Whether to apply minimum token usage features. Accepts two values: `default` (no) and `efficiency` (yes). |
 | `extraEnvVars` | `[]` | A list of extra environment variables to set when installing the agent container. Each entry can be either `key=value`, or just `key` if the key is an existing environment variable on the local system. |
 | `taskFolder` | `tasks` | The folder containing the markdown-format test files. |
+| `testSkills` | `none` | The host folder under which each user-defined test skill lives in its own subfolder (each holding a `SKILL.md`). When set, `waterwheel-load-test-skills` loads every such skill into the agent; `none` means no test skills are loaded. Requires agent image `1.4.0` or newer. |
 | `instructionFolder` | `none` | If provided, all files in this folder are copied into the `/agent/instructions` folder in the container. Files are copied once, when the container is installed. |
 | `presetContextFile` | `none` | A JSON file to install into the container as `/agent/instructions/preset-context.json`. If `instructionFolder` already contains a `preset-context` file, that file takes precedence. `waterwheel-update-context` also **writes** to this path — see [Security considerations](#security-considerations). |
 | `globalConstantsFile` | `none` | A JSON file to install into the container as `/agent/instructions/global-context.json`. Works the same way as `presetContextFile`. |
