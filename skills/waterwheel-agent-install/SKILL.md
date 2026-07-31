@@ -12,7 +12,7 @@ description: Install the Waterwheel test agent container into the local Docker e
 This skill uses these defaults:
 
 - Container name: `waterwheel-agent`
-- Image name: `taojdcn/duotail-waterwheel:1.3.0`
+- Image name: `taojdcn/duotail-waterwheel:1.4.0`
 - Allow rebuild: `false`
 - AI provider: `anthropic`
 - AI model: `claude-sonnet-4-6`
@@ -23,7 +23,7 @@ This skill uses these defaults:
 Before running, look for a `waterwheel.config.json` file in the project root. If it exists, override the defaults with its values:
 
 - Use `containerName` in place of `waterwheel-agent`
-- Use `imageName` in place of `taojdcn/duotail-waterwheel:1.3.0`
+- Use `imageName` in place of `taojdcn/duotail-waterwheel:1.4.0`
 - Use `allowRebuild` in place of `false`
 - Use `aiProvider` in place of `anthropic`
 - Use `aiModel` in place of `claude-sonnet-4-6`
