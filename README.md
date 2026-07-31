@@ -34,7 +34,7 @@ npx skills add taodong/duotail-waterwheel-skills#v2.0.0@waterwheel-run
 npx skills add taodong/duotail-waterwheel-skills#v2.0.0 --skill '*'
 ```
 
-`#<tag>` accepts any git tag or branch. Pin a version when a newer release raises the required agent image (`imageName`) or otherwise changes behavior you're not ready to adopt. For example, `v2.0.0` requires agent image `1.4.0`; to stay on the earlier `1.3.0` line, pin `#v1.0.0`. Releases are listed on the repository's [tags page](https://github.com/taodong/duotail-waterwheel-skills/tags).
+`#<tag>` accepts any git tag or branch. Pin a version when a newer release raises the required agent image (`imageName`) or otherwise changes behavior you're not ready to adopt. For example, `v2.0.0` requires agent image `1.4.0`; to stay on an earlier agent image line, pin `#v1.0.0`. Releases are listed on the repository's [tags page](https://github.com/taodong/duotail-waterwheel-skills/tags).
 
 ## Skills
 
@@ -71,6 +71,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
   "presetContextFile": "none",
   "globalConstantsFile": "none",
   "enableLocalTest": true,
+  "allowedDomains": ["http://localhost:8080", "http://localhost:3000", "http://localhost:5173"],
   "testCheckInterval": 30,
   "appLogs": [],
   "maxFixAttempts": 0,
