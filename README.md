@@ -42,6 +42,7 @@ npx skills add taodong/duotail-waterwheel-skills#v2.0.0 --skill '*'
 |---|---|
 | `waterwheel-run` | Run the full pipeline end to end: install the agent, load tests, load instructions, load test skills, then run the test-and-fix loop |
 | `waterwheel-test-and-fix` | Run Waterwheel to perform predefined web tests, report pass/fail results, identify the root cause of failed tests, and then fix them when permissions are granted |
+| `waterwheel-rerun-tests` | Replay a subset of tests from the last full run's checkpoints — all of them, a range between two test names, or a single test, optionally with data overrides and repeated N times; reports and diagnoses failures without fixing them (requires agent image `1.5.0`+) |
 | `waterwheel-load-tests` | (Re)load the markdown test tasks from the project's task folder into the Waterwheel agent container |
 | `waterwheel-load-instructions` | (Re)load instruction and configuration files (instruction folder, preset context, global constants, domain permissions, local-host testing) into the Waterwheel agent container |
 | `waterwheel-load-test-skills` | (Re)load the project's user-defined test skills from the `testSkills` folder into the Waterwheel agent container (requires agent image `1.4.0`+) |
@@ -58,7 +59,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 ```json
 {
   "containerName": "waterwheel-agent",
-  "imageName": "taojdcn/duotail-waterwheel:1.4.0",
+  "imageName": "taojdcn/duotail-waterwheel:1.5.0",
   "allowRebuild": false,
   "aiProvider": "anthropic",
   "aiModel": "claude-sonnet-4-6",
@@ -82,7 +83,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 | Key | Default | Description |
 |---|---|---|
 | `containerName` | `waterwheel-agent` | Name of the Waterwheel Docker container. |
-| `imageName` | `taojdcn/duotail-waterwheel:1.4.0` | The Waterwheel agent Docker image to pull. Minimum supported version is `1.4.0` (the `waterwheel-load-test-skills` skill needs the `load-test-skills` command added in `1.4.0`). |
+| `imageName` | `taojdcn/duotail-waterwheel:1.5.0` | The Waterwheel agent Docker image to pull. Each skill states its own minimum: `waterwheel-rerun-tests` needs `1.5.0` (for `generate-rerun-config`, `rerun-tests`, and `get-test-report`) and `waterwheel-load-test-skills` needs `1.4.0` (for `load-test-skills`). Pinning an image older than `1.5.0` leaves those skills failing with an explicit message. |
 | `allowRebuild` | `false` | When `false`, an existing container with the matching name is only ever started — never rebuilt. When `true`, if a matching container fails to start or its AI configuration has changed, `waterwheel-agent-uninstall` is run to remove it and a fresh installation is performed. |
 | `aiProvider` | `anthropic` | The AI provider for your API key. Supported values: `anthropic`, `openai`, `gemini`, `deepseek`, or `gemma`. |
 | `aiModel` | `claude-sonnet-4-6` | The AI model the Waterwheel agent should use. |

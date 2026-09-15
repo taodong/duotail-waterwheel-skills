@@ -1,6 +1,6 @@
 {
   "containerName": "waterwheel-agent",
-  "imageName": "taojdcn/duotail-waterwheel:1.4.0",
+  "imageName": "taojdcn/duotail-waterwheel:1.5.0",
   "allowRebuild": false,
   "aiProvider": "anthropic",
   "aiModel": "claude-sonnet-4-6",
