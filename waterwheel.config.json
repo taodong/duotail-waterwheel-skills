@@ -4,6 +4,7 @@
   "allowRebuild": false,
   "aiProvider": "anthropic",
   "aiModel": "claude-sonnet-4-6",
+  "aiBaseUrl": "none",
   "aiKeyVarName": "AI_API_KEY",
   "tokenMode": "efficiency",
   "extraEnvVars": [],

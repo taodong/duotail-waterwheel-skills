@@ -63,6 +63,7 @@ The skills work out of the box with sensible defaults. To customise, create a `w
   "allowRebuild": false,
   "aiProvider": "anthropic",
   "aiModel": "claude-sonnet-4-6",
+  "aiBaseUrl": "none",
   "aiKeyVarName": "AI_API_KEY",
   "tokenMode": "efficiency",
   "extraEnvVars": [],
@@ -83,10 +84,11 @@ The skills work out of the box with sensible defaults. To customise, create a `w
 | Key | Default | Description |
 |---|---|---|
 | `containerName` | `waterwheel-agent` | Name of the Waterwheel Docker container. |
-| `imageName` | `taojdcn/duotail-waterwheel:1.5.0` | The Waterwheel agent Docker image to pull. Each skill states its own minimum: `waterwheel-rerun-tests` needs `1.5.0` (for `generate-rerun-config`, `rerun-tests`, and `get-test-report`) and `waterwheel-load-test-skills` needs `1.4.0` (for `load-test-skills`). Pinning an image older than `1.5.0` leaves those skills failing with an explicit message. |
+| `imageName` | `taojdcn/duotail-waterwheel:1.5.0` | The Waterwheel agent Docker image to pull. Each skill states its own minimum: `waterwheel-rerun-tests` needs `1.5.0` (for `generate-rerun-config`, `rerun-tests`, and `get-test-report`) and `waterwheel-load-test-skills` needs `1.4.0` (for `load-test-skills`). Setting `aiBaseUrl` — and therefore using `aiProvider: openai-compatible` at all — also needs `1.5.0`, which is where `config-ai-provider --base-url` was added. Pinning an image older than `1.5.0` leaves those skills failing with an explicit message. |
 | `allowRebuild` | `false` | When `false`, an existing container with the matching name is only ever started — never rebuilt. When `true`, if a matching container fails to start or its AI configuration has changed, `waterwheel-agent-uninstall` is run to remove it and a fresh installation is performed. |
-| `aiProvider` | `anthropic` | The AI provider for your API key. Supported values: `anthropic`, `openai`, `gemini`, `deepseek`, or `gemma`. |
+| `aiProvider` | `anthropic` | The AI provider for your API key. Supported values: `anthropic`, `openai`, `gemini`, `deepseek`, `gemma`, or `openai-compatible`. Use `openai-compatible` for any vendor speaking the OpenAI Chat Completions format — OpenRouter, Groq, Together, Fireworks, xAI, or a self-hosted vLLM / LM Studio / LiteLLM proxy — and set `aiBaseUrl` alongside it. |
 | `aiModel` | `claude-sonnet-4-6` | The AI model the Waterwheel agent should use. |
+| `aiBaseUrl` | `none` | Base URL for the AI endpoint. **Required when `aiProvider` is `openai-compatible`** — give the vendor's full base path including any version segment (for example `https://openrouter.ai/api/v1`), since only `/chat/completions` is appended to it. For `gemma` it is the bare Ollama host (for example `http://host.docker.internal:11434`). Every other provider ignores it. `none` means not configured. Requires agent image `1.5.0` or newer. |
 | `aiKeyVarName` | `AI_API_KEY` | The environment variable name which holds your AI API key. For safety reasons, a raw key value isn't accepted. |
 | `tokenMode` | `efficiency` | Whether to apply minimum token usage features. Accepts two values: `default` (no) and `efficiency` (yes). |
 | `extraEnvVars` | `[]` | A list of extra environment variables to set when installing the agent container. Each entry can be either `key=value`, or just `key` if the key is an existing environment variable on the local system. |

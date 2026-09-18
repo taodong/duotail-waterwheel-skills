@@ -16,6 +16,7 @@ This skill uses these defaults:
 - Allow rebuild: `false`
 - AI provider: `anthropic`
 - AI model: `claude-sonnet-4-6`
+- AI base URL: `none`
 - AI key variable name: `AI_API_KEY`
 - Token mode: `efficiency`
 - Extra environment variables: none (empty list)
@@ -27,6 +28,7 @@ Before running, look for a `waterwheel.config.json` file in the project root. If
 - Use `allowRebuild` in place of `false`
 - Use `aiProvider` in place of `anthropic`
 - Use `aiModel` in place of `claude-sonnet-4-6`
+- Use `aiBaseUrl` in place of `none`
 - Use `aiKeyVarName` in place of `AI_API_KEY`
 - Use `tokenMode` in place of `efficiency`
 - Use `extraEnvVars` in place of the empty list
@@ -72,7 +74,9 @@ Read the running container's AI configuration:
 docker exec <containerName> display-ai-config
 ```
 
-Compare the returned values against the resolved configuration (`aiProvider`, `aiModel`, `tokenMode`).
+Compare the returned values against the resolved configuration (`aiProvider`, `aiModel`, `tokenMode`, and `aiBaseUrl`).
+
+Compare `aiBaseUrl` only when it is set to something other than `none`, and treat a `display-ai-config` response with no `aiBaseUrl` key as "no value". Images older than `1.5.0` do not report it, and a missing key must not be read as drift on every container. Two `openai-compatible` containers can otherwise agree on provider, model and token mode while pointing at entirely different vendors — the case this comparison exists to catch.
 
 - All values match → report that an existing Waterwheel container was found and started, then stop — the skill is complete.
 - Any discrepancy → force-remove the container so a fresh one can be installed:
@@ -83,7 +87,19 @@ docker rm -f <containerName>
 
 Then continue to step 5.
 
-## 5. Pull and install the image
+## 5. Check the provider has what it needs
+
+If `aiProvider` is `openai-compatible` and `aiBaseUrl` is `none`, **stop**: tell the user that
+`openai-compatible` requires `aiBaseUrl` in `waterwheel.config.json`, set to the vendor's full base
+path including any version segment (for example `https://openrouter.ai/api/v1`). Do not install.
+
+This check runs before anything is pulled or started, because step 7 would otherwise fail on
+`Error: --base-url is required for provider 'openai-compatible'.` after a container already exists —
+leaving behind a container that cannot be configured.
+
+Any other provider: continue.
+
+## 6. Pull and install the image
 
 Run a new container from `<imageName>`:
 
@@ -100,20 +116,25 @@ Build the command as follows:
   - Otherwise, prefix each element with `-e`. For example, `["MAX_SNAPSHOT_HISTORY=3", "ENABLE_API_LOGGING"]` becomes `-e MAX_SNAPSHOT_HISTORY=3 -e ENABLE_API_LOGGING`.
   - Ignore any `AI_API_KEY` entry in `extraEnvVars`; it is already set above.
 
-- On success → continue to step 6.
+- On success → continue to step 7.
 - On error → report the error to the user and stop.
 
-## 6. Configure the AI provider
+## 7. Configure the AI provider
 
 With the container running, configure its AI provider:
 
 ```shell
-docker exec <containerName> config-ai-provider --provider <aiProvider> --model <aiModel> --mode <tokenMode>
+docker exec <containerName> config-ai-provider --provider <aiProvider> --model <aiModel> --mode <tokenMode> [--base-url <aiBaseUrl>]
 ```
 
-- On success → continue to step 7.
-- On error → report the error to the user and stop.
+- `[--base-url <aiBaseUrl>]` is included only when `aiBaseUrl` is not `none`; omit it entirely otherwise.
+  - Required by `openai-compatible` (already checked in step 5) and used by `gemma` as the Ollama host. Every other provider ignores it and the command warns.
 
-## 7. Report and suggest next steps
+- On success → continue to step 8.
+- On error:
+  - **The command rejects `--base-url`** (error text such as `Unknown option: --base-url`) → the image is older than `1.5.0`, which is where `--base-url` was added. **Stop**: tell the user to set `imageName` to at least `taojdcn/duotail-waterwheel:1.5.0` and reinstall the container.
+  - Otherwise → report the error to the user and stop.
+
+## 8. Report and suggest next steps
 
 Report that the Waterwheel container `<containerName>` is installed and running. Suggest that the next step is to either load tests or load instructions for the agent.
