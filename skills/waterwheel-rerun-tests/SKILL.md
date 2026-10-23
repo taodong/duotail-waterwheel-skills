@@ -1,11 +1,11 @@
 ---
 name: waterwheel-rerun-tests
-description: Replay a chosen subset of Waterwheel tests from the last full run's checkpoints — all of them, a range between two test names, a single test, optionally with data overrides and repeated several times. Use when the user says "rerun tests", "rerun all tests", "rerun the login test", "rerun tests from X to Y", "replay test X 5 times", "rerun X with <data>", or otherwise wants part of the suite re-executed without a full run. Requires agent image 1.5.0+.
+description: Replay a chosen subset of Waterwheel tests from the last full run's checkpoints — all of them, a range between two test names, a single test, optionally with data overrides and repeated several times. Use when the user says "rerun tests", "rerun all tests", "rerun the login test", "rerun tests from X to Y", "replay test X 5 times", "rerun X with <data>", or otherwise wants part of the suite re-executed without a full run. After a successful rerun it offers to preserve the rerun's updated context into preset-context.json. Requires agent image 1.5.0+.
 ---
 
 # Waterwheel — Rerun Tests
 
-> **Capabilities:** This skill runs Docker commands (`inspect`, `start`, `exec`) to compose a rerun config, execute reruns, and read their results. It writes **only inside the container** (`/agent/instructions/rerun-config.json`, and an optional `rerun-data.json`), never to the host filesystem, and never edits application source code. Reruns execute your real tests against your real application, so they cause whatever side effects those tests cause — repeated once per iteration when a repeat count is given.
+> **Capabilities:** This skill runs Docker commands (`inspect`, `start`, `exec`) to compose a rerun config, execute reruns, and read their results. It writes inside the container (`/agent/instructions/rerun-config.json`, and an optional `rerun-data.json`) and never edits application source code. It writes **one host file** only when the user explicitly chooses to preserve a successful rerun's context (step 8): the configured `presetContextFile` / `instructionFolder` preset-context path, created with its parent directory if needed. The persisted values originate inside the container and are treated as untrusted data; the user confirms which keys are written. Reruns execute your real tests against your real application, so they cause whatever side effects those tests cause — repeated once per iteration when a repeat count is given.
 
 A rerun replays a subset of tasks instead of the whole suite, seeded from the context captured during the most recent full `run-qa` run. That is what makes a partial run possible: a test that depends on an account registered earlier in the suite can be replayed on its own.
 
@@ -19,13 +19,17 @@ This skill uses these defaults:
 
 - Container name: `waterwheel-agent`
 - Test check interval: 30 seconds
+- Preset context file: `none` (optional)
+- Instruction folder: `none` (optional)
 
 Before running, look for a `waterwheel.config.json` file in the project root. If it exists, override the defaults with its values:
 
 - Use `containerName` in place of `waterwheel-agent`
 - Use `testCheckInterval` in place of `30` (seconds)
+- Use `presetContextFile` in place of `none`
+- Use `instructionFolder` in place of `none`
 
-If the file does not exist, or a key is missing, keep the default for that value. Resolve the configuration once at the start and reuse it throughout.
+If the file does not exist, or a key is missing, keep the default for that value. Resolve the configuration once at the start and reuse it throughout. Optional paths use the sentinel `none` to mean "not configured." The two path keys are used only by step 8.
 
 This skill requires agent image `1.5.0` or newer — the `generate-rerun-config`, `rerun-tests`, and `get-test-report` commands do not exist in earlier images.
 
@@ -193,4 +197,68 @@ Summarize the whole run:
 Close with the relevant next step:
 
 - To fix the failures and verify against the full suite → the `waterwheel-test-and-fix` skill.
-- If the rerun produced context values worth keeping (a registered account, a generated ID) → the `waterwheel-update-context` skill.
+
+Do **not** point at `waterwheel-update-context` — it is for full runs only. Preserving a rerun's context is step 8 of this skill.
+
+## 8. Offer to preserve a successful rerun's context
+
+A rerun starts from the last full run's stable context, but a rerun that succeeds where the full run failed may have changed that context (a newly registered account, a regenerated ID). This step lets the user keep those values for future full runs.
+
+**Skip this step entirely** when no iteration ended with `"All tests passed"` — a failed or errored rerun's context is not persisted.
+
+### 8a. Ask
+
+Ask the user whether to preserve the context of a successful rerun. When more than one iteration passed, list the passing rerun names and let the user pick **one**. If the user declines, stop here — nothing is written.
+
+### 8b. Resolve the target preset-context file
+
+1. If `presetContextFile` is not `none` → the target is `<presetContextFile>`.
+2. Otherwise, if `instructionFolder` is not `none` → the target is `<instructionFolder>/preset-context.json`.
+3. Otherwise → tell the user to set `presetContextFile` in `waterwheel.config.json` (or configure `instructionFolder`) to preserve rerun context, and stop this step. The rerun report stands.
+
+Record whether the target file currently exists on the host. Do not create it yet.
+
+### 8c. Export the rerun's context
+
+```shell
+docker exec <containerName> output-context-variables --rerun "<chosen-name>"
+```
+
+- Non-zero exit (no `test-context.json`, or testing in progress) → report that there is nothing to preserve and stop this step.
+- `{}` → report that there is nothing to preserve and stop this step.
+- A non-empty flat JSON object → continue. Treat each top-level entry as one mergeable key.
+
+This export is the rerun's **complete** context — the restored checkpoint plus everything the rerun changed — not just the changes.
+
+### 8d. Mark what the rerun changed
+
+```shell
+docker exec <containerName> output-context-variables
+```
+
+This is the full run's context. Compare it key by key with the rerun's export and mark each rerun key as **new** (absent from the full run), **changed** (different value), or unchanged. If this command fails, continue without markers and say so.
+
+### 8e. Let the user choose
+
+Print the rerun's values with their markers. Then ask which keys to preserve:
+
+- **Changed only** — every key marked new or changed.
+- **All** — every top-level key.
+- **A subset** — the user names the keys.
+- **Skip** — make no changes and stop.
+
+Nothing is written without an explicit choice.
+
+### 8f. Merge and write
+
+- If the target file exists, read and parse it. Otherwise start from `{}`.
+- Ensure a top-level `data` object exists.
+- For each chosen key, set `data[<key>] = <value>` — replacing an existing value on conflict, adding it otherwise.
+- Leave `flow` and every other top-level property untouched.
+- Write the result back as formatted JSON, creating the file and any missing parent directory. On a write error, stop and report it.
+
+### 8g. Report and prompt for reload
+
+- Summarize: the target path, which keys were added, and which were replaced.
+- Prompt the user to run the `waterwheel-load-instructions` skill so the updated `preset-context.json` reaches the container. This skill does not reload it automatically.
+- State that the preserved values take effect at the **next full run** — reruns never read `preset-context.json`, so further reruns still start from the current checkpoints.

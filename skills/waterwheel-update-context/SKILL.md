@@ -1,6 +1,6 @@
 ---
 name: waterwheel-update-context
-description: Save context variables produced by the latest Waterwheel run into the project's preset-context.json so future tests can reuse them. Use when the user says "update waterwheel context", "save context variables", "update preset context", "persist run context", or otherwise wants the latest run's generated values written back into preset context.
+description: Save context variables produced by the latest full Waterwheel run (run-qa) into the project's preset-context.json so future tests can reuse them. Use when the user says "update waterwheel context", "save context variables", "update preset context", "persist run context", or otherwise wants the latest full run's generated values written back into preset context. Full runs only — do not use it for a rerun; waterwheel-rerun-tests offers its own option to preserve a successful rerun's context.
 ---
 
 # Waterwheel — Update Context
@@ -8,6 +8,8 @@ description: Save context variables produced by the latest Waterwheel run into t
 > **Capabilities:** This skill runs Docker commands (`inspect`, `start`, `exec`), reads container-generated context values, and **writes one JSON file on the host** at the configured `presetContextFile` / `instructionFolder` path (creating it and its parent directory if needed). The path is fully user-controlled — it may point anywhere the agent can write — so the write location is only as constrained as your configuration. The values it persists originate inside the container and are treated as untrusted data; the user confirms which keys are written.
 
 During a run, the Waterwheel agent's tests can create or update context values (for example, an AI-generated username and password for a freshly registered account). This skill exports those values from the container and merges the ones the user chooses into the project's `preset-context.json` `data` object, so they become seed values for future runs.
+
+This skill is for **full runs only**. It reads the latest full run's context and never a rerun's. To preserve the context of a successful rerun, use the preserve option at the end of the `waterwheel-rerun-tests` skill instead.
 
 This skill **never** edits `waterwheel.config.json` — it only reads it and writes the resolved preset-context file.
 
